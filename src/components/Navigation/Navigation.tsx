@@ -39,9 +39,9 @@ export default function Navigation() {
   ];
 
   const storeItems = [
-    ['Templates / Componentes', '/ventas/templates'],
-    ['Juegos Digitales', '/ventas/juegos'],
-    ['Electrónica', '/ventas/electronica'],
+    ['Templates / Componentes', '/pages/TemplatesYComponentes'],
+    ['Juegos Digitales', '/pages/juegos'],
+    ['Electrónica', '/pages/electronica'],
   ];
 
   return (
@@ -54,7 +54,7 @@ export default function Navigation() {
       <div className="container px-4 mx-auto">
         <div className="flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold">
-            tulogo
+            RenéKuhmDev
           </Link>
           <div className="items-center hidden space-x-8 md:flex">
             {navItems.map(([title, url]) => (
