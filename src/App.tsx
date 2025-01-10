@@ -9,9 +9,9 @@ function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
-          <div className="min-h-screen bg-background">
+          <div className="min-h-screen">
             <Navigation />
-            <main className="w-full py-6 px-4 mt-16">
+            <main className="px-4 py-6 mt-16 w-full">
               <AppRoutes />
             </main>
           </div>
