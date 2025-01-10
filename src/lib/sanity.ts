@@ -1,16 +1,26 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
-
+// Debug: mostrar la configuración
+console.log('Inicializando cliente Sanity con:', {
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+  dataset: import.meta.env.VITE_SANITY_DATASET,
+  token: import.meta.env.VITE_SANITY_TOKEN ? 'Presente' : 'No presente',
+});
 
 export const client = createClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
-  dataset: import.meta.env.VITE_SANITY_DATASET,
-  apiVersion: import.meta.env.VITE_SANITY_API_VERSION,
-  useCdn: import.meta.env.VITE_SANITY_USE_CDN === 'true',
+  dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
+  apiVersion: '2024-01-09',
+  useCdn: false,
+  token: import.meta.env.VITE_SANITY_TOKEN,
+  perspective: 'published',
+  stega: false,
+  withCredentials: true, // Habilitar credenciales
 });
 
+// Configurar el builder de imágenes
 const builder = imageUrlBuilder(client);
 
 export function urlFor(source: SanityImageSource) {

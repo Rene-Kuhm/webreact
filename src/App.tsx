@@ -1,30 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from '@/pages/Home';
-import Layout from '@/components/Layout/Layout';
-import PortfolioPage from '@/pages/PortfolioPage';
-import AboutPage from '@/pages/AboutPage';
-import ContactoPage from '@/pages/ContactPage';
-import TemplatesYComponentes from '@/pages/TemplateyComponentes';
-import ElectronicaPage from './pages/Electronica';
-import GamesPage from './pages/Juegos';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { AuthProvider } from './context/auth.provider';
+import { CartProvider } from './context/cart.context';
+import Navigation from './components/Navigation/Navigation';
+import AppRoutes from './components/routes/AppRoutes';
 
-
-export default function App() {
+function App() {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/contacto" element={<ContactoPage />} />
-          <Route path="/sobre-mi" element={<AboutPage />} />
-          <Route path="/pages/TemplatesYComponentes" element={<TemplatesYComponentes />} />
-          <Route path="/pages/electronica" element={<ElectronicaPage />} />
-          <Route path="/pages/juegos" element={<GamesPage />} />
-        </Routes>
-      </Layout>
+      <AuthProvider>
+        <CartProvider>
+          <div className="min-h-screen bg-background">
+            <Navigation />
+            <main className="w-full py-6 px-4 mt-16">
+              <AppRoutes />
+            </main>
+          </div>
+        </CartProvider>
+      </AuthProvider>
     </Router>
   );
 }
 
+export default App;

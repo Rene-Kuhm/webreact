@@ -1,28 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
+    "composite": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": ".", // Configura la base para los alias
-    "paths": {
-      "@/*": ["./src/*"] // Define el alias @/ para la carpeta src/
-    }
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
   },
-  "include": ["src"],
-  "references": [
-   // { "path": "./tsconfig.app.json" },
-   // { "path": "./tsconfig.node.json" }
-  ]
+  "include": ["vite.config.ts"]
 }

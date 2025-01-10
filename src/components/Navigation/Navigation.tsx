@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils'; // Asegúrate de que esta utilidad esté adaptada para React
+import { cn } from '@/lib/utils';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
+import { MapPinIcon } from '@heroicons/react/24/outline';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [storeMenuTimeout, setStoreMenuTimeout] = useState<NodeJS.Timeout | null>(null);
+  const { address, loading, error } = useGeolocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,7 +22,7 @@ export default function Navigation() {
 
   const handleMouseEnter = () => {
     if (storeMenuTimeout !== null) {
-      clearTimeout(storeMenuTimeout); // Limpia el timeout si existe
+      clearTimeout(storeMenuTimeout);
     }
     setIsStoreOpen(true);
   };
@@ -27,21 +30,26 @@ export default function Navigation() {
   const handleMouseLeave = () => {
     const timeout = setTimeout(() => {
       setIsStoreOpen(false);
-    }, 300); // Retraso de 300ms antes de cerrar el menú
-    setStoreMenuTimeout(timeout); // timeout es un número
+    }, 300);
+    setStoreMenuTimeout(timeout);
   };
 
   const navItems = [
     ['INICIO', '/'],
-    ['SOBRE MÍ', '/sobre-mi'],
     ['PORTFOLIO', '/portfolio'],
+    ['SOBRE MÍ', '/about'],
     ['CONTACTO', '/contacto'],
   ];
 
   const storeItems = [
-    ['Templates / Componentes', '/pages/TemplatesYComponentes'],
-    ['Juegos Digitales', '/pages/juegos'],
-    ['Electrónica', '/pages/electronica'],
+    ['Templates / Componentes', '/templates'],
+    ['Juegos Digitales', '/juegos'],
+    ['Electrónica', '/electronica'],
+  ];
+
+  const authItems = [
+    ['Iniciar Sesión', '/login'],
+    ['Registro', '/register'],
   ];
 
   return (
@@ -51,11 +59,24 @@ export default function Navigation() {
         isScrolled ? 'bg-white dark:bg-gray-900 shadow-md py-4' : 'bg-transparent py-6'
       )}
     >
-      <div className="container px-4 mx-auto">
+      <div className="w-full px-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold">
-            RenéKuhmDev
-          </Link>
+          <div className="flex items-center space-x-4">
+            <Link to="/" className="text-2xl font-bold">
+              RenéKuhmDev
+            </Link>
+            <div 
+              className="hidden md:flex items-center text-sm text-muted-foreground hover:text-foreground cursor-pointer"
+              onClick={() => address && window.open(`https://maps.google.com/?q=${encodeURIComponent(address)}`, '_blank')}
+            >
+              <MapPinIcon className="h-5 w-5 mr-1" />
+              <span>
+                {loading ? 'Obteniendo ubicación...' : 
+                 error ? 'Ubicación no disponible' : 
+                 address || 'Ubicación no encontrada'}
+              </span>
+            </div>
+          </div>
           <div className="items-center hidden space-x-8 md:flex">
             {navItems.map(([title, url]) => (
               <Link
@@ -66,6 +87,7 @@ export default function Navigation() {
                 {title}
               </Link>
             ))}
+            
             {/* Menú desplegable para la tienda */}
             <div
               className="relative"
@@ -99,7 +121,6 @@ export default function Navigation() {
                       key={url}
                       to={url}
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                      onClick={() => setIsStoreOpen(false)}
                     >
                       {title}
                     </Link>
@@ -107,12 +128,28 @@ export default function Navigation() {
                 </div>
               )}
             </div>
+
+            {/* Auth Links */}
+            <div className="flex items-center space-x-4">
+              {authItems.map(([title, url]) => (
+                <Link
+                  key={url}
+                  to={url}
+                  className="text-sm transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  {title}
+                </Link>
+              ))}
+            </div>
+
+            {/* Theme Toggle */}
             <ThemeToggle />
           </div>
+
+          {/* Mobile Menu Button */}
           <button
-            className="text-gray-600 md:hidden dark:text-gray-300"
+            className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -125,56 +162,42 @@ export default function Navigation() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                d={
+                  isMenuOpen
+                    ? "M6 18L18 6M6 6l12 12"
+                    : "M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"
+                }
               />
             </svg>
           </button>
         </div>
+
+        {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="mt-4 space-y-4 md:hidden">
+          <div className="md:hidden mt-4">
             {navItems.map(([title, url]) => (
               <Link
                 key={url}
                 to={url}
-                className="block text-sm transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                onClick={() => setIsMenuOpen(false)}
+                className="block py-2 text-sm hover:text-blue-600 dark:hover:text-blue-400"
               >
                 {title}
               </Link>
             ))}
-            {/* Menú desplegable para la tienda en móviles */}
-            <div>
-              <button
-                className="flex items-center gap-1 text-sm transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+            <div className="py-2">
+              <div
+                className="text-sm hover:text-blue-600 dark:hover:text-blue-400"
                 onClick={() => setIsStoreOpen(!isStoreOpen)}
               >
                 TIENDA
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className={`w-4 h-4 transition-transform ${isStoreOpen ? 'rotate-180' : ''}`}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
-              </button>
+              </div>
               {isStoreOpen && (
-                <div className="pl-4 mt-2 space-y-2">
+                <div className="pl-4 mt-2">
                   {storeItems.map(([title, url]) => (
                     <Link
                       key={url}
                       to={url}
-                      className="block text-sm transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        setIsStoreOpen(false);
-                      }}
+                      className="block py-2 text-sm hover:text-blue-600 dark:hover:text-blue-400"
                     >
                       {title}
                     </Link>
@@ -182,7 +205,17 @@ export default function Navigation() {
                 </div>
               )}
             </div>
-            <div className="pt-4">
+            {/* Mobile Auth Links */}
+            {authItems.map(([title, url]) => (
+              <Link
+                key={url}
+                to={url}
+                className="block py-2 text-sm hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                {title}
+              </Link>
+            ))}
+            <div className="py-2">
               <ThemeToggle />
             </div>
           </div>
