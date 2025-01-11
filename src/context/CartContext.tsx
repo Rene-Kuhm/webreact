@@ -1,16 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react';
-import type { CartItem, CartContextType } from './cart.types';
-import { calculateTotal, calculateItemCount } from './cart.utils';
+import { CartItem, CartContextType } from './cart.types';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-export { CartContext };
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [itemCount, setItemCount] = useState(0);
 
-  // Cargar carrito desde localStorage
+  // Cargar carrito del localStorage al iniciar
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -18,40 +14,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Guardar carrito en localStorage cuando cambie
   useEffect(() => {
-    setTotal(calculateTotal(items));
-    setItemCount(calculateItemCount(items));
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
-  const addItem = (item: CartItem) => {
-    setItems(prevItems => {
-      const existingItem = prevItems.find(i => i.id === item.id);
+  const addItem = (newItem: CartItem) => {
+    setItems(prev => {
+      const existingItem = prev.find(item => item.id === newItem.id);
       if (existingItem) {
-        return prevItems.map(i =>
-          i.id === item.id
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
+        return prev.map(item =>
+          item.id === newItem.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
-      return [...prevItems, { ...item, quantity: 1 }];
+      return [...prev, newItem];
     });
   };
 
   const removeItem = (itemId: string) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    setItems(prev => prev.filter(item => item.id !== itemId));
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
-    if (quantity < 1) {
+    if (quantity === 0) {
       removeItem(itemId);
       return;
     }
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === itemId
-          ? { ...item, quantity }
-          : item
+    setItems(prev =>
+      prev.map(item =>
+        item.id === itemId ? { ...item, quantity } : item
       )
     );
   };
@@ -59,6 +52,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = () => {
     setItems([]);
   };
+
+  const total = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  const itemCount = items.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   return (
     <CartContext.Provider
@@ -76,3 +79,5 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     </CartContext.Provider>
   );
 }
+
+export const CartContextInstance = CartContext;

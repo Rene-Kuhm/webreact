@@ -43,7 +43,7 @@ export function useGeolocation() {
             loading: false,
             error: null,
           });
-        } catch (error) {
+        } catch {
           setLocation({
             address: '',
             loading: false,

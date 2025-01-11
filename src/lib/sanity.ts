@@ -13,14 +13,12 @@ export const client = createClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
   dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
   apiVersion: '2024-01-09',
-  useCdn: false,
+  useCdn: true,
   token: import.meta.env.VITE_SANITY_TOKEN,
   perspective: 'published',
-  stega: false,
-  withCredentials: true, // Habilitar credenciales
 });
 
-// Configurar el builder de imágenes
+// Configurar el builder de URLs para imágenes
 const builder = imageUrlBuilder(client);
 
 export function urlFor(source: SanityImageSource) {

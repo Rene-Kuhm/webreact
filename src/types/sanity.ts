@@ -9,12 +9,15 @@ export interface SanityImage {
 export interface Template {
   _id: string;
   _type: 'template';
+  _createdAt: string;
   name: string;
   description: string;
   price: number;
   imageUrl?: string;
   fileUrl?: string;
-  image?: SanityImage;
+  image?: string;
+  category?: string;
+  demoUrl?: string;
   file?: {
     _type: 'file';
     asset: {

@@ -1,0 +1,19 @@
+{
+  "name": "mercadopago-api",
+  "version": "1.0.0",
+  "description": "Backend for MercadoPago integration",
+  "main": "mercadopago.js",
+  "scripts": {
+    "start": "node mercadopago.js",
+    "dev": "nodemon mercadopago.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

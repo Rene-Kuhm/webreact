@@ -54,7 +54,7 @@ export default defineConfig(({ command, mode }) => {
     },
     // Add this for better error handling
     server: {
-      port: 5173,
+      port: 5174,
       strictPort: false,
       open: true,
       hmr: {

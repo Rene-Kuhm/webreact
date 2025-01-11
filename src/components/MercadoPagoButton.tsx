@@ -7,8 +7,6 @@ interface MercadoPagoButtonProps {
   items: CartItem[];
 }
 
-const accessToken = import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
-
 export function MercadoPagoButton({ items }: MercadoPagoButtonProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -17,33 +15,13 @@ export function MercadoPagoButton({ items }: MercadoPagoButtonProps) {
     setIsLoading(true);
 
     try {
-      console.log('Initiating payment request...', { items });
-
-      // Datos de la preferencia de pago
-      const preferenceData = {
-        items: items.map(item => ({
-          id: item.id.toString(),
-          title: item.name,
-          quantity: item.quantity,
-          unit_price: Number(item.price),
-          currency_id: 'ARS', // Moneda (pesos argentinos)
-        })),
-        back_urls: {
-          success: `${window.location.origin}/success`,
-          failure: `${window.location.origin}/failure`,
-          pending: `${window.location.origin}/pending`,
-        },
-        auto_return: 'approved', // Redirigir automáticamente después del pago
-      };
-
-      // Crear la preferencia de pago
-      const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+      // Llamada al backend
+      const response = await fetch('http://localhost:3001/create-preference', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(preferenceData),
+        body: JSON.stringify({ items }),
       });
 
       if (!response.ok) {
@@ -55,7 +33,6 @@ export function MercadoPagoButton({ items }: MercadoPagoButtonProps) {
       const data = await response.json();
       console.log('Preference created:', data);
 
-      // Redirigir al usuario al checkout de MercadoPago
       if (data.init_point) {
         window.location.href = data.init_point;
       } else {
